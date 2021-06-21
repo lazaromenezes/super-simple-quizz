@@ -1,0 +1,19 @@
+{
+  "name": "super-simple-quizz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lazaromenezes/super-simple-quizz.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lazaromenezes/super-simple-quizz/issues"
+  },
+  "homepage": "https://github.com/lazaromenezes/super-simple-quizz#readme"
+}
