@@ -3,21 +3,42 @@ import logging
 import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Python HTTP trigger function processed a request.')
+    from azure.data.tables import TableClient
+    import os
 
-    name = req.params.get('name')
-    if not name:
+    connection_string = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
+
+    body = req.get_json()
+
+    with TableClient.from_connection_string(connection_string, 'votes') as table_client:
+
+        entity = {
+            u'PartitionKey': u"city",
+            u'RowKey': body['city']
+        }
+
         try:
-            req_body = req.get_json()
-        except ValueError:
-            pass
-        else:
-            name = req_body.get('name')
+            existing = table_client.get_entity(entity['PartitionKey'], entity['RowKey'])
 
-    if name:
-        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
-    else:
-        return func.HttpResponse(
-             "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
-             status_code=200
-        )
+            existing["votes"] = existing["votes"] + 1
+
+            table_client.upsert_entity(entity = existing)
+
+            return "True"
+        except:
+            try:
+                entity['votes'] = 1
+                
+                table_client.upsert_entity(entity = entity)
+
+                return "True"
+
+            except Exception as err:
+
+                return str(err)
+
+
+
+
+
+
