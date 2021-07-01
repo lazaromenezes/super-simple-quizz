@@ -22,7 +22,8 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
             partials['total'] = total
 
-            return str(json.dumps(partials))
+            results = json.dumps(partials)
+            return func.HttpResponse(results, mimetype = "application/json")
 
         except Exception as err:
             return str(err)
