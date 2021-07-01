@@ -4,7 +4,7 @@ import azure.functions as func
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     from azure.data.tables import TableClient
-    import os
+    import os, json
 
     connection_string = os.environ.get('AZURE_STORAGE_CONNECTION_STRING')
 
@@ -14,16 +14,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             entities = table_client.list_entities()
 
             total = 0
-            partials = []
+            partials = {}
 
             for entity in entities:
                 total += entity['votes']
-                partials.push({
-                    'city': entity['city']
-                    'votes': entity['votes']
-                })
+                partials[entity['RowKey']] = entity['votes']
 
-            return str(partials)
+            partials['total'] = total
 
-        except:
-            pass
+            return str(json.dumps(partials))
+
+        except Exception as err:
+            return str(err)
+
